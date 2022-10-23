@@ -1,0 +1,26 @@
+<mat-spinner *ngIf="loading"></mat-spinner>
+<div class="post-container" *ngIf="post$ | async as post">
+  <img [src]="post?.imageUrl" alt="">
+  <div class="post-info">
+    <h4 class="post-name">{{ post?.description }}</h4>
+    <h6>{{ post?.name }}</h6>
+    <div class="like-buttons" *ngIf="!likePending">
+      <div class="likes">
+        <i [ngClass]="{ 'fas liked': liked, 'far': !liked, 'disabled': disliked }" class="like fa-thumbs-up fa-lg" (click)="onLike()"></i>
+        <span>{{ post.likes }}</span>
+      </div>
+      <div class="dislikes">
+        <i [ngClass]="{ 'fas disliked': disliked, 'far': !disliked, 'disabled': liked }" class="dislike fa-thumbs-down fa-lg" (click)="onDislike()"></i>
+        <span>{{ post.dislikes }}</span>
+      </div>
+    </div>
+    <div class="like-pending" *ngIf="likePending">
+      <mat-spinner class="white-spinner"></mat-spinner>
+    </div>
+    <div class="control-buttons">
+      <button mat-raised-button (click)="onBack()">Retour</button>
+      <button mat-raised-button (click)="onModify()" *ngIf="userId === post.userId">Modifier</button>
+      <button mat-raised-button color="warn" (click)="onDelete()" *ngIf="userId === post.userId">Supprimer</button>
+    </div>
+  </div>
+</div>

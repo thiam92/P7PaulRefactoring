@@ -1,0 +1,71 @@
+.post-container {
+  display: flex;
+  img {
+    padding-top: 40px;
+    max-width: 100%;
+    height: auto;
+    max-height: 50vh;
+  }
+}
+
+.post-info {
+  padding: 40px 20px;
+  flex: 1;
+}
+
+.manufacturer {
+  margin: 0;
+}
+
+.post-name {
+  margin: 0;
+}
+
+.like-buttons {
+  display: flex;
+  i {
+    margin-right: 0.5em;
+    cursor: pointer;
+  }
+}
+
+.likes, .dislikes {
+  margin: 0 0.4em;
+}
+
+.liked {
+  color: rgba(51, 219, 0, 1);
+}
+
+.disliked {
+  color: rgba(219, 51, 0, 1);
+}
+
+.like {
+  &:hover {
+    color: rgba(51, 219, 0, 1);
+  }
+}
+
+.dislike {
+  transform: scaleX(-1) translateY(5px);
+  &:hover {
+    color: rgba(219, 51, 0, 1);
+  }
+}
+
+.disabled {
+  cursor: none;
+  &:hover {
+    color: rgba(190, 190, 190, 1);
+  }
+  color: rgba(190, 190, 190, 1);
+}
+
+.control-buttons {
+  button {
+    margin: 1em 1em 0 0;
+  }
+}
+
+

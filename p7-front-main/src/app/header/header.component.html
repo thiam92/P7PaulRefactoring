@@ -1,0 +1,40 @@
+<nav>
+  <div class="left-nav">
+    <ul>
+      <li>
+        <a routerLink="posts" routerLinkActive="active" *ngIf="isAuth$ | async">
+          Tous les posts 
+        </a>
+      </li>
+      <li>
+        <a routerLink="new-post" routerLinkActive="active" *ngIf="isAuth$ | async">
+          Ajouter un post
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="logo">
+    <div class="logo-image">
+      <img alt="groupomania logo" src="../../assets/images/icon-left-font.png">
+    </div>
+  </div>
+  <div class="right-nav">
+    <ul>
+      <li>
+        <a routerLink="signup" routerLinkActive="active" *ngIf="!(isAuth$ | async)">
+          S'inscrire
+        </a>
+      </li>
+      <li>
+        <a routerLink="login" routerLinkActive="active" *ngIf="!(isAuth$ | async)">
+          Se connecter
+        </a>
+      </li>
+      <li>
+        <a (click)="onLogout()" *ngIf="isAuth$ | async">
+          Déconnexion 
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
