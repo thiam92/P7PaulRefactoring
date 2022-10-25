@@ -57,40 +57,6 @@ const fs = require('fs');
       
   }
 
-  //supprimer image
-  function imageDelete(product) {
-    if (product == null) return
-    console.log("DELETE IMAGE", product)
-    const imageToDelete = product.imageUrl.split("/").at(-1)
-    return unlink("images/" + imageToDelete)
-  }
- 
-  //payload
-  function makePayload(hasNewImage, req) {
-    console.log("hasNewImage:", hasNewImage)
-    if (!hasNewImage) return req.body
-    const payload = JSON.parse(req.body.post)
-    payload.imageUrl = makeImageUrl(req, req.file.fileName)
-    console.log("NOUVELLE IMAGE A GERER")
-    console.log("voici le payload:", payload)
-    return payload
-  }
-  
-  //update et envoie réponse a chaque modification de la post
-  function sendClientResponse(product, res) {
-    if (product == null) {
-      console.log("NOTHING TO UPDATE")
-      return res.status(404).send({ message: "Object not found in database" })
-    }
-    console.log("ALL GOOD, UPDATING:", product)
-    return Promise.resolve(res.status(200).send(product)).then(() => product)
-  }
-  
-
-  //creation url image 
-  function makeImageUrl(req, fileName) {
-    return req.protocol + "://" + req.get("host") + "/images/" + fileName
-  }
   
   // fonction gerant la creation de post
   function createpost(req, res) {
@@ -193,4 +159,4 @@ function incrementLike(product, userId, like) {
   return product
 }
 
-  module.exports = { getposts, createpost,  getpostsById,  deletepost,  modifpost, sendClientResponse, likepost }
+  module.exports = { getposts, createpost,  getpostsById,  deletepost,  modifpost, likepost }
