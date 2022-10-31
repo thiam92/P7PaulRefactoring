@@ -4,6 +4,7 @@ import { postsService } from '../services/posts.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { catchError, EMPTY, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { User } from '../models/user.model';
 
 @Component({
   selector: 'app-single-post',
@@ -19,6 +20,7 @@ export class SinglepostComponent implements OnInit {
   liked!: boolean;
   disliked!: boolean;
   errorMessage!: string;
+  getUser! : User;
 
   constructor(private posts: postsService,
     private route: ActivatedRoute,
@@ -27,6 +29,26 @@ export class SinglepostComponent implements OnInit {
 
   ngOnInit() {
     this.userId = this.auth.getUserId();
+
+       this.auth.getUSerById(this.userId)
+       .subscribe(
+         (response) => {                           
+           this.getUser = response; 
+           alert(JSON.stringify(this.getUser.isadmin));
+         },
+         (error) => {                             
+           console.error('Request failed with error')
+           this.errorMessage = error;
+           this.loading = false;
+         },
+         () => {                                  
+           console.error('Request completed')
+           this.loading = false; 
+         })
+
+
+    
+    
     this.loading = true;
     this.post$ = this.route.params.pipe(
       map(params => params['id']),
@@ -40,6 +62,8 @@ export class SinglepostComponent implements OnInit {
         }
       })
     );
+
+     
   }
 
   onLike() {

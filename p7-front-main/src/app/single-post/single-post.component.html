@@ -19,8 +19,8 @@
     </div>
     <div class="control-buttons">
       <button mat-raised-button (click)="onBack()">Retour</button>
-      <button mat-raised-button (click)="onModify()" *ngIf="userId === post.userId">Modifier</button>
-      <button mat-raised-button color="warn" (click)="onDelete()" *ngIf="userId === post.userId">Supprimer</button>
+      <button mat-raised-button (click)="onModify()" *ngIf="userId === post.userId || getUser.isadmin">Modifier</button>
+      <button mat-raised-button color="warn" (click)="onDelete()" *ngIf="userId === post.userId || getUser.isadmin">Supprimer</button>
     </div>
   </div>
 </div>

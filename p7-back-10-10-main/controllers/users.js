@@ -6,7 +6,7 @@ async function createUser(req, res) {
     try {
       const { email, password } = req.body
       const hashedPassword = await hashPassword(password)
-      const user = new User({ email, password: hashedPassword })
+      const user = new User({ email, password: hashedPassword})
       await user.save()
       res.status(201).send({ message: "Utilisateur enregistré !" })
     } catch (err) {
@@ -30,7 +30,7 @@ async function logUser(req, res) {
       res.status(403).send({ message: "Mot de passe incorrect" })
     }
     const token = createToken(email)
-    res.status(200).send({ userId: user?._id, token: token })
+    res.status(200).send({ userId: user?._id, token: token ,isAdmin: user?.isadmin})
   } catch (err) {
     console.error(err)
     res.status(500).send({ message: "Erreur interne" })
@@ -42,4 +42,12 @@ function createToken(email) {
     return jwt.sign({ email: email }, "baleine", { expiresIn: "24h" })
 }
 
-module.exports = { createUser, logUser }
+  //recuperation USer par id
+  function getUserById (req, res) {
+    const id = req.params.id
+    User.findById(id)
+    .then(user => res.status(200).send({ isadmin: user?.isadmin}))
+    .catch(console.error)
+  }
+
+module.exports = { createUser, logUser,getUserById }
