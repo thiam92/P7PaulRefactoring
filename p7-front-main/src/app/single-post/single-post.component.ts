@@ -34,7 +34,6 @@ export class SinglepostComponent implements OnInit {
        .subscribe(
          (response) => {                           
            this.getUser = response; 
-           alert(JSON.stringify(this.getUser.isadmin));
          },
          (error) => {                             
            console.error('Request failed with error')
