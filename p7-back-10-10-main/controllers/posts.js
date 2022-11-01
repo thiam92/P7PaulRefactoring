@@ -96,67 +96,46 @@ const fs = require('fs');
 
   // fonction gerant like et dislike
   function likepost(req, res) {
-    const id = req.params.id
     const { userId, like} = req.body
-    // si like different de 1/0/-1 alors arret fonction +err
-    if (![1, -1, 0].includes(like)) return res.status(403).send({ message: "Invalid like value" })
-    // sinon 
-    Product.findById(id)
-    // une fois produit recu depuis la base de donnée, updateVote dessus
-    .then(product => updateLike(product, like, userId, res))
-    //return du produit et save de celui ci apres incrementVote ou resetVote
-    .then((pr) => pr.save())
-    //update du produit
-    .then((prod) => sendClientResponse(prod, res))
-    .catch((err) => res.status(500).send(err))
+    Product.findOne({ _id: req.params.id })
+    .then(post => {
+        let newUsersLiked = post.usersLiked
+        let newUsersDisliked = post.usersDisliked
+        if (like === 1) {
+            if (post.usersLiked.includes(userId)) {
+                newUsersLiked.splice(newUsersLiked.indexOf(userId), 1)
+            } else {
+                newUsersLiked.push(userId)
+            }
+        }
+        if (like === -1) {
+            if (post.usersDisliked.includes(userId)) {
+                newUsersDisliked.splice(newUsersDisliked.indexOf(userId), 1)
+            } else {
+                newUsersDisliked.push(userId)
+            }
+        }
+        if (like === 0) {
+            if (post.usersLiked.includes(userId)) {
+                newUsersLiked.splice(newUsersLiked.indexOf(userId), 1)
+            }
+            if (post.usersDisliked.includes(userId)) {
+                newUsersDisliked.splice(newUsersDisliked.indexOf(userId), 1)
+            } 
+        }
+        Product.updateOne(
+            { _id: req.params.id }, 
+            { 
+                likes: newUsersLiked.length,
+                dislikes: newUsersDisliked.length,
+                usersLiked: newUsersLiked,
+                usersDisliked: newUsersDisliked 
+            }
+        )
+        .then(() => res.status(200).json({ message: 'Objet modifié !'}))
+        .catch(error => res.status(400).json({ error }));
+        
+  
+    })
 }
-
-function updateLike(product, like, userId, res) {
-  // si like ou dislike alors appel incrementevote
-  if (like === 1 || like === -1) return incrementLike(product, userId, like)
-  // sinon appel resetVote (quand annulation like ou dislike)
-  return resetLike(product, userId, res)
-}
-
-// fonction annulation like ou dislike
-function resetLike(product, userId, res) {
-  const { usersLiked, usersDisliked } = product
-  // si pour chacune de ces arrays userId est trouvé alors return : 
-  if ([usersLiked, usersDisliked].every((arr) => arr.includes(userId)))
-    return Promise.reject("User seems to have voted both ways")
-
-    // si userID n'est trouvé dans aucune de ces arrays alors return : 
-  if (![usersLiked, usersDisliked].some((arr) => arr.includes(userId)))
-    return Promise.reject("User seems to not have voted")
-
-    //si user trouvé dans like
-  if (usersLiked.includes(userId)) {
-    //like -1
-    --product.likes 
-    product.usersLiked = product.usersLiked.filter((id) => id !== userId)
-    //si user trouvé dans dislike
-  } else {
-    //dislike -1
-    --product.dislikes
-    product.usersDisliked = product.usersDisliked.filter((id) => id !== userId)
-  }
-  return product
-}
-
-// fonction like ou dislike
-function incrementLike(product, userId, like) {
-  const { usersLiked, usersDisliked } = product
-
-  // votersArray = a, si like on push dans usersLiked sinon on push dans usersDisliked
-  const votersArray = like === 1 ? usersLiked : usersDisliked
-  // si usersId deja dans le array alors on ne fait rien (a deja voté)
-  if (votersArray.includes(userId)) return product
-  // sinon on push l'id dans l'array
-  votersArray.push(userId)
-
-  // est ce que like =1, si oui alors like +1 sinon dislike
-  like === 1 ? ++product.likes : ++product.dislikes
-  return product
-}
-
-  module.exports = { getposts, createpost,  getpostsById,  deletepost,  modifpost, likepost }
+module.exports = { getposts, createpost,  getpostsById,  deletepost,  modifpost, likepost }
