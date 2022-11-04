@@ -21,12 +21,20 @@ const fs = require('fs');
   function deletepost(req, res) {
     Product.findOne({_id: req.params.id})
     .then(post => {
+           if(req.file){
            const filename = post.imageUrl.split('/images/')[1];
             fs.unlink(`images/${filename}`, () => {
               Product.deleteOne({_id: req.params.id})
                     .then(() => { res.status(200).json({message: 'Objet supprimé !'})})
                     .catch(error => res.status(401).json({ error }));
-            });   
+            });  
+           }
+           else {
+            Product.deleteOne({_id: req.params.id})
+                    .then(() => { res.status(200).json({message: 'Objet supprimé !'})})
+                    .catch(error => res.status(401).json({ error }));
+           }
+ 
     })
     .catch( error => {
         res.status(500).json({ error });
@@ -43,7 +51,7 @@ const fs = require('fs');
     const postObject = req.file ? {
       ...JSON.parse(req.body.post),
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-  } : { ...req.body };
+  } : { ...req.body};
 
   Product.findOne({_id: req.params.id})
       .then((sauce) => { 
@@ -60,9 +68,7 @@ const fs = require('fs');
   
   // fonction gerant la creation de post
   function createpost(req, res) {
-//    const { body, file } = req
- //   console.log({ file })
-  //  const { fileName } = file
+
     const post = JSON.parse( req.body.post)
     console.log(post)
     const {name, email, description, userId } = post 
@@ -97,6 +103,8 @@ const fs = require('fs');
   // fonction gerant like et dislike
   function likepost(req, res) {
     const { userId, like} = req.body
+
+
     Product.findOne({ _id: req.params.id })
     .then(post => {
         let newUsersLiked = post.usersLiked

@@ -28,6 +28,9 @@ export class postsService {
     return this.http.get<post>('http://localhost:3000/api/posts/' + id).pipe(
       catchError(error => throwError(error.error.message))
     );
+
+    
+   
   }
 
   likepost(id: string, like: boolean) {
@@ -61,11 +64,12 @@ export class postsService {
 
   modifypost(id: string, post: post, image: string | File) {
     console.log('vous etes dans modif')
-    if (typeof image === 'string') {
+    if (typeof image === 'string' || image === null)  {
       return this.http.put<{ message: string }>('http://localhost:3000/api/posts/' + id, post).pipe(
         catchError(error => throwError(error.error.message))
       );
-    } else {
+    }
+    else {
       const formData = new FormData();
       formData.append('post', JSON.stringify(post));
       formData.append('image', image);
